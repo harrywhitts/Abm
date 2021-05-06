@@ -1,0 +1,195 @@
+import random
+import matplotlib.pyplot
+import matplotlib.animation
+import agentframework
+import csv
+
+
+#Open in.txt file
+f = open('in.txt', newline='')
+reader = csv.reader(f, quoting=csv.QUOTE_NONNUMERIC)
+
+
+
+#Make an empty list to hold environmental data as a 2D list
+environment = []
+
+
+
+#Make a list of rows
+for row in reader:
+    #Make a second empty list called rowlist
+    rowlist = []
+    #Append rowlist to environment list
+    environment.append(rowlist)
+    #A list of values
+    for value in row:
+        #Append values to rowlist 
+        rowlist.append(value)
+        print("These are the data values in the raster grid: " + str(value))
+        
+f.close() 
+
+
+#Check data has come in correctly
+matplotlib.pyplot.imshow(environment)
+matplotlib.pyplot.show()
+
+  
+#Number of agents in the model
+num_of_agents = 10
+#Number of iterations the agents will go through within the for-loop
+num_of_iterations = 1
+#Create empty list we can add set of coordinates to.
+#Data is in 2-D list which is a strong format to produce analysis
+agents = []
+#Set disatnce of neighbourhood for Agents
+neighbourhood = 20
+
+
+
+#Make the agents.
+#Create a list with num_of_agents agent coordinates by using a for-loop 
+#Create a link between data and environment and agents and agent list.
+#Append cordinates to agents list.
+for i in range(num_of_agents):
+    agents.append(agentframework.Agent(environment,
+                                       agents, random.randint(0, 99),
+                                       random.randint(0, 99)))
+    
+# Test to see where agents plot on graph.   
+agents.append(agentframework.Agent(environment, agents, 0, 0))
+agents.append(agentframework.Agent(environment, agents, 3, 4))
+agents.append(agentframework.Agent(environment, agents, 5, 6))
+
+
+# Make num_of_agents equal to the length of the agent list.
+num_of_agents = len(agents)
+
+#Print x agent to prove link between agents and agent list.
+print(agents[0].agents[1].x)
+
+
+#Create a new figure. Figsize is width and height in inches.
+fig = matplotlib.pyplot.figure(figsize=(7, 7))
+
+
+#Add axes to positions [left,bottom,width,height] where all quanitites are in
+#fractions of figure width and height.
+ax = fig.add_axes([0, 0, 1, 1])
+
+carry_on = True
+
+#Get a random x and y co-ordinate.
+def update(frame_number):
+    global carry_on
+    
+    fig.clear() 
+    
+#Move the agents.
+for j in range(num_of_iterations):
+    for i in range(num_of_agents):
+        random.shuffle(agents)#Randomises order agents are processed
+        agents[i].move()#Moves agents within environment
+        agents[i].eat()#Agents eat their environment
+        agents[i].share_with_neighbours(neighbourhood)#Agents share info
+        print("Show the integer twenty: " + str(neighbourhood))#Check
+        #neighbourhood passed into Agent class works
+
+     
+    if random.random() < 0.1:
+        carry_on = False
+        print("stopping condition")
+
+           
+#Create scatter graph of agentsmatplotlib.pyplot.xlim(0, 99)
+matplotlib.pyplot.ylim(0, 99)
+matplotlib.pyplot.imshow(environment)
+for i in range(num_of_agents):
+    matplotlib.pyplot.scatter(agents[i].x,agents[i].y)
+    print("Show the y,x coordinates of the agents in the scatter graph: " + 
+          str(agents[i].y),str(agents[i].x))
+matplotlib.pyplot.show()
+
+def gen_function(b = [0]):
+    a = 0
+    global carry_on #Not actually needed as we're not assigning, but clearer
+    while (a < 10000) & (carry_on) :
+        yield a			# Returns control and waits next call.
+        a = a + 1
+
+
+#animation = matplotlib.animation.FuncAnimation(fig, update, interval=1,
+#repeat=False, frames=10)
+animation = matplotlib.animation.FuncAnimation(fig,
+                                               update, frames=gen_function,
+                                               repeat=False)
+
+
+
+# Code below has been commented out. It is not needed as we move the coordinat
+#es using the move function in agentframework.
+
+# #Move the agents.
+# for j in range(num_of_iterations):
+#     for i in range(num_of_agents):
+#         random.shuffle(agents)#Randomises order in which agents are processed
+#         agents[i].move()#Moves agents within environment
+#         agents[i].eat()#Agents eat their environment
+#         agents[i].share_with_neighbours(neighbourhood)#Agents share info
+#         print(neighbourhood)#Check neighbourhood passed into Agent class
+#         works
+
+
+
+
+ 
+# #Use an external library called matplotlib.pyplot to plot data in graghs.
+# #Plot the data as agent locations
+# #display environment data after it has been nibbled away
+matplotlib.pyplot.xlim(0, 99)
+matplotlib.pyplot.ylim(0, 99)
+matplotlib.pyplot.imshow(environment)
+for i in range(num_of_agents):
+    matplotlib.pyplot.scatter(agents[i].x,agents[i].y)
+matplotlib.pyplot.show()
+
+
+
+
+
+
+#Create x and y coordinates from Agent class
+a = agentframework.Agent(environment, agents, random.randint(0, 99),
+                                       random.randint(0, 99)) 
+
+#Test you agents have been initialized to a random location
+print("Agent Class has initialised random x,y coordinates: " + str(a.y)
+      + " " + str(a.x))
+
+
+#Make sure that the agents move randomly
+a.move()
+print("Move method inside Agent Class changes steps x,y cooridnates randomly: "
+      + str(a.y) + " " + str(a.x))
+a.move()
+print("Move method inside Agent Class changes steps x,y cooridnates randomly: "
+      + str(a.y) + " " + str(a.x))
+a.move()
+print("Move method inside Agent Class changes steps x,y cooridnates randomly: "
+      + str(a.y) + " " + str(a.x))
+
+
+#Save as csv file
+f2 = open('outt.csv','w',newline='')
+writer = csv.writer(f2, delimiter = ' ')
+
+for row in environment:
+    writer.writerow(row)
+f2.close()
+
+        
+
+        
+        
+        

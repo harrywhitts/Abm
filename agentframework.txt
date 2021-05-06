@@ -1,0 +1,156 @@
+import random
+
+#Define an Agent class in a new agentframework.py module
+ 
+
+class Agent:
+    
+    def __init__(self, environment, agents, x, y,):
+        """
+        Initialise variables so that the Agent Class can initialize the attri-
+        butes of the class.
+
+        Parameters
+        ----------
+        environment : NUMBER
+            The environment that the agents will nibble away at.
+        agents : Agents
+            The agents will move around the environment.
+        x : Number
+            The x-coordianate of the agent.
+        y : Number
+            The y-coordinate of the agent.
+
+        Returns
+        -------
+        None.
+
+        """
+        
+        #Create environment for each agent
+        self.environment = environment
+        self.agents = agents
+        self.store = 0
+        #Add x and y cooridnates indisde Agent class and initialize to a
+        #random location with a name that tells us what they are
+        self.x = x
+        self.y = y
+        
+        
+        
+    
+    #Make a method to move coordinates randomly
+    #Stop boundary issues by using Torus option.
+    
+    
+    def move(self):
+        """
+        Move agents' x and y co-ordinates on a "random walk". They'll 
+        start from some position, and then move one step based on a random 
+        number. 
+
+        Returns
+        -------
+        None.
+
+        """
+        
+        
+        #Generate random floarting point number between 0 and 1.
+        #Use modulus operator to stop boundary effects
+        
+        
+        if random.random() < 0.5:
+            self.x = self.x + 1 % 100 
+        else:
+            self.x = self.x - 1 % 100
+
+        if random.random() < 0.5:
+            self.y = self.y + 1 % 100
+        else:
+            self.y = self.y - 1 % 100 
+            
+    
+            
+            
+            
+        
+
+   #Create eat attribute for Agent class 
+
+   
+    def eat(self):
+        """
+        Decides how much environment the Agents will eat. 
+
+        Returns
+        -------
+        None.
+
+        """
+        
+        if self.environment[self.y][self.x] > 10:
+            self.environment[self.y][self.x] -= 10
+            self.store += 10
+            
+   
+           
+    #Search for close neighbours and share information with 
+    #neighbouring agents.
+    
+    
+    def share_with_neighbours(self, neighbourhood):
+        """
+        Work out the distance to each of the other agents, and if they fall 
+        within the neighbourhood distance, it should set it, and its
+        neighbours, stores equal to the average of their two stores.
+
+        Parameters
+        ----------
+        neighbourhood : Number
+            The distance within which agents will share.
+
+        Returns
+        -------
+        None.
+
+        """
+        for agent in self.agents:
+            dist = self.distance_between(agent)
+            if dist <= neighbourhood:
+                ave = (self.store + agent.store) / 2
+                self.store = ave
+                agent.store = ave
+                print("Sharing information with agent that is " + str(dist) 
+                      + " distance away. " + "Our average value is " + str(ave)
+                      + ".")
+                
+                
+
+    def distance_between(self, agent):
+        """
+        Calculate distance between two agents once they have moved 
+        randomly. This works out if the agents are close enough to interact.
+
+        Parameters
+        ----------
+        agent : Agent
+            The agents will move around the environment.
+            
+
+        Returns
+        -------
+        Number
+            Returns the distance between two agents.
+
+        """
+        return (((self.x - agent.x)**2) + ((self.y - agent.y)**2))**0.5             
+            
+                  
+            
+  
+        
+            
+            
+        
+    
